@@ -1,0 +1,11 @@
+   Feature  Importance
+0  sensor8    0.244771
+1  sensor6    0.235292
+2  sensor4    0.201530
+3  sensor0    0.092529
+4  sensor2    0.082885
+5  sensor3    0.054088
+6  sensor1    0.030965
+7  sensor5    0.026874
+8  sensor7    0.016379
+9  sensor9    0.014688

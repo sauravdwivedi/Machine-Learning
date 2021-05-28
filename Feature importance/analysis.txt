@@ -1,0 +1,11 @@
+1) My process of thought: I did some research, and found out how to analyse data for feature importance. Factors such as correlation play decisive role in determining important features.
+
+2) Properties of the artificially generated data set: The dataset has 400 rows and 12 columns. First column is datatype object, and rest are float/numerical values. I choose relevant features to be numerical values, therefore I select all columns except first column (sample index). I found that data is clean. There are no NAN entries. I replaced -1.0 with 0 and 1.0 with 1 in class_label to make it binary, so that I could use a binary classification algorithm.
+
+3) I used Random Forest Classifier. This biggest advantage of this method is the speed of computation - all needed values are computed during the Radom Forest training.
+
+4) The weaknesses of the method is to tendency to prefer numerical features and categorical features with high cardinality.
+
+5) Scalability: Random Forest is a better choice when it comes to scalability.
+
+6) Alternative methods: More model agnostic methods are: "Feature importance using permutation", "Feature Importance Computed with SHAP Values", "Feature Importance Computed with XGBoost", and "Feature Selection using Fisher Score".
