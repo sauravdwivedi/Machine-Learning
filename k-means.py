@@ -16,9 +16,9 @@ import contextlib
 
 
 class Datum:
-    def __init__(self, instance):
+    def __init__(self, instance, label=None):
         self.instance = instance
-        label: Datum = None
+        self.label = label
 
 
 def find_k_means(
@@ -71,7 +71,7 @@ def setup():
         n_samples=data_points, centers=k, cluster_std=0.60, random_state=0
     )
     std_dev = np.std(X)
-    plt.scatter(X[:, 0], X[:, 1], s=20)
+    plt.scatter(X[:, 0], X[:, 1], s=10)
     plt.savefig("blobs.png")
     plt.clf()
 
@@ -91,12 +91,46 @@ def setup():
     num_of_iter: int = int(input("Choose number of iterations (e.g. 50): "))
 
     for i in range(num_of_iter):
+        data, centers = find_k_means(data, centers, some_large_number)
         centers_plot = np.array([center.instance for center in centers])
-        plt.scatter(X[:, 0], X[:, 1], s=20)
-        plt.scatter(centers_plot[:, 0], centers_plot[:, 1], c="red", s=100, alpha=0.9)
+        j = 0
+        colors = [
+            "#1f77b4",
+            "#ff7f0e",
+            "#2ca02c",
+            "#9467bd",
+            "#8c564b",
+            "#e377c2",
+            "#7f7f7f",
+            "#bcbd22",
+            "#17becf",
+            "#d62728",
+        ]
+        clusters = []
+
+        for center in centers:
+            center_data: list = []
+
+            for datum in data:
+                if datum.label == center:
+                    center_data.append(datum.instance)
+
+            clusters.append(center_data)
+
+        plt.scatter(centers_plot[:, 0], centers_plot[:, 1], c="red", s=150, alpha=0.9)
+
+        for cluster in clusters:
+            if j < len(colors):
+                color = colors[j]
+            else:
+                color = None
+            if len(cluster) != 0:
+                X = np.array(cluster)
+                plt.scatter(X[:, 0], X[:, 1], c=color, s=10)
+                j += 1
+
         plt.savefig(f"clusters-{i}.png")
         plt.clf()
-        data, centers = find_k_means(data, centers, some_large_number)
 
     print("\t Final centers:")
 
