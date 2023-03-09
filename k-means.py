@@ -1,13 +1,18 @@
 """
 The program implements k-means algorithm from unsupervised learning. Program creates data blobs using sklearn utility 
-make_blobs. User is asked to input number of clusters, number of data instances and number of iterations. 
+make_blobs. User is asked to input number of clusters, number of data instances and number of iterations. The resulting
+animation with cluster centers pops up in Google Chrome. 
 """
 
+import os
 import math
 import random
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.datasets import make_blobs
+import glob
+from PIL import Image
+import contextlib
 
 
 class Datum:
@@ -40,29 +45,57 @@ def find_k_means(
     return data, centers
 
 
-if __name__ == "__main__":
-    k: int = int(input("Chose number of blobs (e.g. 4): "))
+def make_gif() -> None:
+    fp_in = "*.png"
+    fp_out = "clusters.gif"
+
+    with contextlib.ExitStack() as stack:
+        imgs = (stack.enter_context(Image.open(f)) for f in sorted(glob.glob(fp_in)))
+        img = next(imgs)
+        img.save(
+            fp=fp_out,
+            format="GIF",
+            append_images=imgs,
+            save_all=True,
+            duration=1000,
+            loop=0,
+        )
+
+
+def setup():
+    k: int = int(input("\n\n\n\n Chose number of blobs (e.g. 4): "))
     data_points: int = int(input("Chose number of data instances (e.g. 400): "))
 
     # Make k data blobs using sklearn make_blobs utility
     X, y_true = make_blobs(
         n_samples=data_points, centers=k, cluster_std=0.60, random_state=0
     )
+    std_dev = np.std(X)
     plt.scatter(X[:, 0], X[:, 1], s=20)
-    plt.savefig("blobs.svg")
-    print("Close picture to continue!")
-    plt.show()
+    plt.savefig("blobs.png")
+    plt.clf()
 
-    # Make k random centers
+    # Make k random centers within standard deviation range
     centers: list[Datum] = [
-        Datum([round(random.random(), 2), round(random.random(), 2)]) for i in range(k)
+        Datum(
+            [
+                round(random.uniform(-std_dev, std_dev), 2),
+                round(random.uniform(-std_dev, std_dev), 2),
+            ]
+        )
+        for i in range(k)
     ]
 
-    some_large_number: float = 5 * np.std(X)
+    some_large_number: float = 100 * std_dev
     data = [Datum(datum) for datum in X.tolist()]
     num_of_iter: int = int(input("Chose number of iterations (e.g. 50): "))
 
     for i in range(num_of_iter):
+        centers_plot = np.array([center.instance for center in centers])
+        plt.scatter(X[:, 0], X[:, 1], s=20)
+        plt.scatter(centers_plot[:, 0], centers_plot[:, 1], c="red", s=100, alpha=0.9)
+        plt.savefig(f"clusters-{i}.png")
+        plt.clf()
         data, centers = find_k_means(data, centers, some_large_number)
 
     print("\t Final centers:")
@@ -70,9 +103,16 @@ if __name__ == "__main__":
     for center in centers:
         print(center.instance)
 
-    centers = np.array([center.instance for center in centers])
-    plt.scatter(X[:, 0], X[:, 1], s=20)
-    plt.scatter(centers[:, 0], centers[:, 1], c="red", s=100, alpha=0.9)
-    plt.savefig("clusters.svg")
-    print("Close picture to continue!")
-    plt.show()
+
+def main():
+    # Install dependencies
+    os.system("pip3 install matplotlib numpy scikit-datasets Pillow")
+    setup()
+    make_gif()
+    # Clean individual PNG files
+    os.system("rm *.png")
+    os.system("open -a 'Google Chrome' clusters.gif")
+
+
+if __name__ == "__main__":
+    main()
