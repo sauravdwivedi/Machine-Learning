@@ -63,8 +63,8 @@ def make_gif() -> None:
 
 
 def setup():
-    k: int = int(input("\n\n\n\n Chose number of blobs (e.g. 4): "))
-    data_points: int = int(input("Chose number of data instances (e.g. 400): "))
+    k: int = int(input("\n\n\n\n Choose number of blobs (e.g. 4): "))
+    data_points: int = int(input("Choose number of data instances (e.g. 400): "))
 
     # Make k data blobs using sklearn make_blobs utility
     X, y_true = make_blobs(
@@ -88,7 +88,7 @@ def setup():
 
     some_large_number: float = 100 * std_dev
     data = [Datum(datum) for datum in X.tolist()]
-    num_of_iter: int = int(input("Chose number of iterations (e.g. 50): "))
+    num_of_iter: int = int(input("Choose number of iterations (e.g. 50): "))
 
     for i in range(num_of_iter):
         centers_plot = np.array([center.instance for center in centers])
